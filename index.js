@@ -1,10 +1,15 @@
-const fs = require('fs');
+console.log('Starting program...');
+
+
+
 const inquirer = require('inquirer');
+const fs = require('fs');
 const open = require('open');
 
 const team = [];
 
 function promptManager() {
+  console.log('Prompting manager...');
   inquirer
     .prompt([
       {
@@ -66,6 +71,8 @@ function promptMenu() {
     });
 }
 
+
+
 function promptEngineer() {
   inquirer
     .prompt([
@@ -90,13 +97,17 @@ function promptEngineer() {
         message: 'Enter the engineer’s GitHub username:',
       },
     ])
-    .then((answers) => {
-      const engineer = {
-        name: answers.name,
-        id: answers.id,
-        email: answers.email,
-        github: answers.github,
-        role: 'Engineer',
-      };
-      team.push(engineer);
-      promptMenu()})};
+
+      .then((answers) => {
+        console.log('Answers received:', answers);
+        const engineer = {
+          name: answers.name,
+          id: answers.id,
+          email: answers.email,
+          github: answers.github,
+          role: 'Engineer',
+        };
+        
+        team.push(engineer);
+        promptMenu();
+      })};
