@@ -1,15 +1,15 @@
-console.log('Starting program...');
+// console.log('Starting program...');
 
 
 
 const inquirer = require('inquirer');
 const fs = require('fs');
-const open = require('open');
+// const open = require('open');
 
 const team = [];
 
-function promptManager() {
-  console.log('Prompting manager...');
+// function promptManager() {
+//   console.log('Prompting manager...');
   inquirer
     .prompt([
       {
@@ -44,9 +44,9 @@ function promptManager() {
       team.push(manager);
       promptMenu();
     });
-}
+// }
 
-function promptMenu() {
+// function promptMenu() {
   inquirer
     .prompt([
       {
@@ -69,11 +69,11 @@ function promptMenu() {
           break;
       }
     });
-}
+// }
 
 
 
-function promptEngineer() {
+// function promptEngineer() {
   inquirer
     .prompt([
       {
@@ -110,4 +110,4 @@ function promptEngineer() {
         
         team.push(engineer);
         promptMenu();
-      })};
+      });
