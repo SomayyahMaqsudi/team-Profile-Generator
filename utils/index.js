@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
-const generateTeamHTML = require('./generateHTML');
 
+const generateTeamHTML = require('../utils/generateHTML');
 const Manager = require('../class/manager');
 const Employee = require('../class/employee');
 const Engineer = require('../class/engineer');
@@ -124,7 +124,7 @@ const init = async() => {
         
       ];
 
-      const EngineerAnswers = await inquirer.createPromptModule(EngineerQuestions);
+      const engineerAnswers = await inquirer.createPromptModule(engineerQuestions);
       const engineer = new Engineer(engineerAnswers);
       Employees.push(engineer);
     };

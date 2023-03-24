@@ -46,7 +46,7 @@ const renderManager=(manager) => {
 
 
 const renderEngineer = (engineer) => {
-    let template=fr.readFileSync(
+    let template=fs.readFileSync(
         path.resolve(templatesDir, "engineer.html"),
         "utf8"
     );
@@ -71,7 +71,7 @@ const renderIntern = (intern) => {
     return template;
 };
 
-const renderFullMarkdown = (HTML) => {
+const renderFullMarkdown = (html) => {
     let template = fs.readFileSync(
         path.resolve(templatesDir, "full-markdown.html"),
         "utf8"
