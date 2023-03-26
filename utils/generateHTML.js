@@ -1,88 +1,54 @@
 const fs = require("fs");
-
 const path = require("path");
-const Employee = require("../class/employee");
+const employee = require("../class/employee");
 
 const templatesDir = path.resolve(__dirname, "../templates");
 
+let cards = "";
+
 const generateHTML = (Employees) => {
-    const HTML = [];
-    HTML.push(
-        Employees
-        .filter((Employee) => Employee.getRole()==="Manager")
-    .map((manager) => renderManager(manager))
-);
-HTML.push(
-    Employees
-    .filter((Employee) => Employee.getRole()==="Engineer")
-    .map((engineer) => renderEngineer(engineer))
-);
-HTML.push(
-    Employees
-    .filter((Employee) => Employee.getRole()==="Intern")
-    .map((intern) => renderIntern(intern))
-);
-return renderFullMarkdown(HTML.join(""));
+
+    for (employee of Employees) {
+        let card = `<div>
+        <ul>
+        <li>${employee.name}</li>
+        <li><span>ID:</span>${employee.id}</li>
+        <li><span>Email:</span> <a href="mailto:${employee.email}">${employee.email}</a></li>
+        ${employee.github ? `<li><span>GitHub:</span> <a href="https://github.com/${employee.github}">${employee.github}</a></li>` : ""}   
+        ${employee.school ? `<li><span>School:</span>${employee.school}` : ""}  
+        ${employee.officenumber ? `<li><span>office number:</span> ${employee.officenumber}` : ""}  
+    </ul>
+    </div>
+    `
+        cards += card;
+    }
 };
+    const finalHtml = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Profile Generator</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+    <header>
+        <h1>My Team</h1>
+    </header>
 
-const renderManager=(manager) => {
-    let template = fs.readFileSync(
-        path.resolve(templatesDir, "manager.html"),
-        "utf8"
-    );
+    <div class="cards">
+    ${cards}
+    </div>
 
-    template=replaceTemplates(template, "name", manager.getName());
-    template=replaceTemplates(template, "ID", manager.getid());
-    template=replaceTemplates(template, "email", manager.getEmail());
-    template=replaceTemplates(template, "role", manager.getRole());
-    template = replaceTemplates(
-    template,
-    "officeNumber",
-    manager.getOfficeNumber()
-    );
-    return template;
-};
+    <script src="script.js"></script>
+</body>
+</html>
+    `
+    ;
+fs.writeFile('./dist/teamProfile.html',finalHtml,'utf8',function(err){
+    if (err) throw err;
+});
 
-
-
-const renderEngineer = (engineer) => {
-    let template=fs.readFileSync(
-        path.resolve(templatesDir, "engineer.html"),
-        "utf8"
-    );
-    template=replaceTemplates(template, "name", engineer.getName());
-    template=replaceTemplates(template, "ID", engineer.getId());
-    template=replaceTemplates(template, "role", engineer.getRole());
-    template=replaceTemplates(template, "email", engineer.getEmail());
-    template=replaceTemplates(template, "Github", engineer.getGithub());
-    return template;
-};
-
-const renderIntern = (intern) => {
-    let template = fs.readFileSync(
-        path.resolve(templatesDir, "intern.html"),
-        "utf8"
-    );
-    template=replaceTemplates(template, "name", intern.getName());
-    template=replaceTemplates(template, "ID", intern.getId());
-    template=replaceTemplates(template, "role", intern.getRole());
-    template=replaceTemplates(template, "email", intern.getEmail());
-    template=replaceTemplates(template, "School", intern.getSchool());
-    return template;
-};
-
-const renderFullMarkdown = (html) => {
-    let template = fs.readFileSync(
-        path.resolve(templatesDir, "full-markdown.html"),
-        "utf8"
-    );
-
-    return replaceTemplates(template,"team", html);
-};
-
-const replaceTemplates = (template,placeholder,value)=> {
-    const pattern = new RegExp('{{${placeholder}}}',"gm");
-    return template.replace(pattern,value);
-};
-
-module.exports=generateHTML;
+module.exports = generateHTML;
