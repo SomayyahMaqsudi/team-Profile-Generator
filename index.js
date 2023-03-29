@@ -1,18 +1,17 @@
 const inquirer = require('inquirer');
 const fs = require('fs');
+const path = require('path');
 
-const generateTeamHTML = require('./utils/generateHTML');
+const generateTeamHTML = require('./src/generateHTML');
+
 const Manager = require('./class/manager');
-const Employee = require('./class/employee');
 const Engineer = require('./class/engineer');
 const Intern = require('./class/intern');
 
-const employee=[];
-const engineer=[];
-const intern=[];
-const manager=[];
+const teamArray=[];
 
-let isTeamComplete = false;
+const distDIR = path.resolve(__dirname, "dist")
+const outPutHTML = path.join(distDIR, "teamProfile.html")
 
 const validateInput = (userInput) => {
   if (userInput===""){
@@ -23,223 +22,62 @@ const validateInput = (userInput) => {
 };
 
 const init = async() => {
-  // await createManager();
-
-  // while (!isTeamComplete){
-  //   const employeeTypeQuestion = [
-  //     {
-  //       type:"list",
-  //       message:"Please select the employee type you wish to add",
-  //       name:"employeeType",
-  //       choices:[
-  //         {name: "Engineer", value:"engineer", short: "Engineer"},
-  //         {name: "Intern", value:"intern", short: "Intern"},
-  //         {name: "None", value:"none", short: "None"},
-  //       ],
-  //     },
-  //   ];
-
-  //   const{employeeType} = await inquirer.createPromptModule(employeeTypeQuestion);
-  //   if (employeeType==="none"){
-  //     isTeamComplete=true;
-  //   }else{
-  //     if (employeeType==="engineer"){
-  //       await createEngineer();
-  //     }
-  //     if (employeeType==="intern"){
-  //       await createIntern();
-  //     }
-  //     }
-  //   }
-
-  //   const HTML = generateHTML(Employees);
-  //   fs.writeFileSync("team-profile.html",HTML,(err) => {
-  //     if (err){
-  //       console.log(err);
-  //     }else{
-  //       console.log("HTLM file created");
-  //     }
-  //   });
-  //   };
-
-
-  //   const createManager = async() => {
-  //     const managerQuestions = [
-  //       {
-  //         type:"input",
-  //         message: "Enter manager name",
-  //         name:"name",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter Employee ID",
-  //         name:"id",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter your office number",
-  //         name:"officeNumber",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter work email",
-  //         name:"email",
-  //         validate:validateInput,
-  //       },
-        
-  //     ];
-
-  //     const managerAnswers = await inquirer.createPromptModule(managerQuestions);
-  //     const manager = new Manager(managerAnswers);
-  //     Employees.push(manager);
-  //   };
-
-
-
-  //   const createEngineer = async() => {
-  //     const engineerQuestions = [
-  //       {
-  //         type:"input",
-  //         message: "Enter engineer name",
-  //         name:"name",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter engineer ID",
-  //         name:"id",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter engineer email",
-  //         name:"email",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter engineer github",
-  //         name:"github",
-  //         validate:validateInput,
-  //       },
-        
-  //     ];
-
-  //     const engineerAnswers = await inquirer.createPromptModule(engineerQuestions);
-  //     const engineer = new Engineer(engineerAnswers);
-  //     Employees.push(engineer);
-  //   };
-
-  //   const createIntern = async() => {
-  //     const InternQuestions = [
-  //       {
-  //         type:"input",
-  //         message: "Enter intern name",
-  //         name:"name",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter intern ID",
-  //         name:"id",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter inten email",
-  //         name:"email",
-  //         validate:validateInput,
-  //       },
-  //       {
-  //         type:"input",
-  //         message: "Enter intern school",
-  //         name:"school",
-  //         validate:validateInput,
-  //       },
-        
-  //     ];
-
-  //     const internAnswers = await inquirer.createPromptModule(internQuestions);
-  //     const intern = new Intern(internAnswers);
-  //     Employees.push(intern);
-  //   };
-
-
-    //the below should be contained in a function
 }
+
+function newManager (){
+  inquirer.prompt([{
+    type:"input",
+    name:"name",
+    message:"What is the name of the Manager?"
+  },{
+    type:"input",
+    name:"id",
+    message:"What is the id of the Manager?"
+  },
+  {
+    type:"input",
+    name:"email",
+    message:"What is the email of the Manager?"
+  },
+  {
+    type:"input",
+    name:"officeNumber",
+    message:"What is the officeNumber of the Manager?"
+  }])
+  .then(managerAnswers => {
+    const manager = new Manager  (
+      managerAnswers.name,
+      managerAnswers.email,
+      managerAnswers.id,
+      managerAnswers.officeNumber
+    )
+    teamArray.push(manager)
+    startQuestions();
+  
+  })
+}
+
     function startQuestions(){
     inquirer.prompt(  {
       type:"list",
       message:"Please select the employee type you wish to add",
       name:"employeeType",
       choices:[
-        "Employee","Engineer","Intern","Manager"
+        "Engineer","Intern","I'm done"
       ],
     }).then(function(answers){
       switch(answers.employeeType){
-        case "Employee":
-          newEmployee()
-          break;
        case "Engineer":
           newEngineer()
           break;
       case "Intern":
         newIntern()
         break;
-      case "Manager":
-        newManager()
-        break;
+      default:
+        buildTeam()
       }
     })
   }
-
-    function newEmployee (){
-      inquirer.prompt([{
-        type:"input",
-        name:"name",
-        message:"What is the name of the Employee?"
-      },{
-        type:"input",
-        name:"id",
-        message:"What is the id of the Employee?"
-      },
-      {
-        type:"input",
-        name:"email",
-        message:"What is the email of the Employee?"
-      }])
-      .then(function(employeeAnswers){
-        const newEmployee = {
-          name:employeeAnswers.name,
-          email: employeeAnswers.email,
-          id:employeeAnswers.id
-        }
-        employee.push(newEmployee)
-        again();
-      
-      })
-    }
-
-    function again(){
-      inquirer.prompt({
-        type:"confirm",
-        name:"again",
-        message:"do you want to add another employee?"
-      }).then(function(answer){
-        if(answer.again){
-          startQuestions();
-        }
-        else{
-          generateTeamHTML(employee);
-          console.log("thank you for updating the employee database. goodbye!");
-          return;
-        }
-      })
-    }
-    
 
     function newEngineer (){
       inquirer.prompt([{
@@ -261,36 +99,19 @@ const init = async() => {
         name:"github",
         message:"What is the github of the Engineer?"
       }])
-      .then(function(engineerAnswers){
-        const newEngineer = {
-          name:engineerAnswers.name,
-          email: engineerAnswers.email,
-          id:engineerAnswers.id,
-          github:engineerAnswers.github
-        }
-        engineer.push(newEngineer)
-        again();
+      .then(engineerAnswers => {
+        const engineer = new Engineer  (
+          engineerAnswers.name,
+          engineerAnswers.email,
+          engineerAnswers.id,
+          engineerAnswers.github
+        )
+        teamArray.push(engineer)
+        startQuestions();
       
-      })
+    })
     }
-
-    function again(){
-      inquirer.prompt({
-        type:"confirm",
-        name:"again",
-        message:"do you want to add another engineer?"
-      }).then(function(answer){
-        if(answer.again){
-          startQuestions();
-        }
-        else{
-          generateTeamHTML(engineer);
-          console.log("thank you for updating the engineeer database. goodbye!");
-          return;
-        }
-      })
-    }
-
+    
     function newIntern (){
       inquirer.prompt([{
         type:"input",
@@ -311,86 +132,21 @@ const init = async() => {
         name:"school",
         message:"What is the school of the Intern?"
       }])
-      .then(function(internAnswers){
-        const newIntern = {
-          name:internAnswers.name,
-          email: internAnswers.email,
-          id:internAnswers.id,
-          school:internAnswers.school
-        }
-        intern.push(newIntern)
-        again();
+      .then(internAnswers => {
+        const inten = new Intern  (
+          internAnswers.name,
+          internAnswers.email,
+          internAnswers.id,
+          internAnswers.school
+        )
+        teamArray.push(inten)
+        startQuestions();
       
       })
     }
 
-    function again(){
-      inquirer.prompt({
-        type:"confirm",
-        name:"again",
-        message:"do you want to add another intern?"
-      }).then(function(answer){
-        if(answer.again){
-          startQuestions();
-        }
-        else{
-          generateTeamHTML(intern);
-          console.log("thank you for updating the intern database. goodbye!");
-          return;
-        }
-      })
-    }
-
-
-
-    function newManager (){
-      inquirer.prompt([{
-        type:"input",
-        name:"name",
-        message:"What is the name of the Manager?"
-      },{
-        type:"input",
-        name:"id",
-        message:"What is the id of the Manager?"
-      },
-      {
-        type:"input",
-        name:"email",
-        message:"What is the email of the Manager?"
-      },
-      {
-        type:"input",
-        name:"officeNumber",
-        message:"What is the officeNumber of the Manager?"
-      }])
-      .then(function(managerAnswers){
-        const newManager = {
-          name: managerAnswers.name,
-          email: managerAnswers.email,
-          id: managerAnswers.id,
-          officeNumber: managerAnswers.officeNumber
-        }
-        manager.push(newManager)
-        again();
-      
-      })
-    }
-
-    function again(){
-      inquirer.prompt({
-        type:"confirm",
-        name:"again",
-        message:"do you want to add another manager?"
-      }).then(function(answer){
-        if(answer.again){
-          startQuestions();
-        }
-        else{
-          generateTeamHTML(manager);
-          console.log("thank you for updating the manager database. goodbye!");
-          return;
-        }
-      })
-    }
-
-startQuestions();
+    newManager();
+    
+    function buildTeam(){
+      fs.writeFileSync(outPutHTML, generateTeamHTML(teamArray), "utf-8")
+    };
