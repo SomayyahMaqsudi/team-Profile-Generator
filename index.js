@@ -4,9 +4,9 @@ const path = require('path');
 
 const generateTeamHTML = require('./src/generateHTML');
 
-const Manager = require('./class/manager');
-const Engineer = require('./class/engineer');
-const Intern = require('./class/intern');
+const Manager = require('./lib/manager');
+const Engineer = require('./lib/engineer');
+const Intern = require('./lib/intern');
 
 const teamArray=[];
 
